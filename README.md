@@ -369,7 +369,7 @@ Akaer/
 
 **João Vitor Mâncio Chaves**
 
-Candidato à vaga de Estágio em Engenharia de Software na **Akaer Engineering**
+Candidato à vaga de Estágio em Análise de Dados na **Akaer Engenharia**
 
 ---
 
@@ -381,7 +381,7 @@ Este projeto foi desenvolvido como parte de um processo seletivo e é de uso exc
 
 ## 🙏 Agradecimentos
 
-Agradeço à **Akaer Engineering** pela oportunidade de participar deste processo seletivo e demonstrar minhas habilidades técnicas através deste desafio completo e abrangente.
+Agradeço à **Akaer Engenharia** pela oportunidade de participar deste processo seletivo e demonstrar minhas habilidades técnicas através deste desafio completo e abrangente.
 
 ---
 
