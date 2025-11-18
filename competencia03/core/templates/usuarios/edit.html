@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editar Usuário</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/base.css' %}">
+    <style>
+        .container { max-width: 600px; }
+        h2 { margin-bottom: 30px; }
+        .checkbox-group { display: flex; align-items: center; gap: 10px; }
+        input[type="checkbox"] { width: 20px; height: 20px; cursor: pointer; }
+        .help-text { font-size: 12px; color: #666; margin-top: 5px; }
+    </style>
+</head>
+<body>
+    <nav class="navbar"><h1>👥 Editar Usuário</h1></nav>
+    <div class="container">
+        <div class="card">
+            <h2>Editar: {{ usuario.username }}</h2>
+            <form method="POST">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="username">Username *</label>
+                    <input type="text" id="username" name="username" value="{{ usuario.username }}" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" value="{{ usuario.email }}">
+                </div>
+                <div class="form-group">
+                    <label for="password">Nova Senha</label>
+                    <input type="password" id="password" name="password">
+                    <p class="help-text">Deixe em branco para manter a senha atual</p>
+                </div>
+                <div class="form-group">
+                    <label for="first_name">Primeiro Nome</label>
+                    <input type="text" id="first_name" name="first_name" value="{{ usuario.first_name }}">
+                </div>
+                <div class="form-group">
+                    <label for="last_name">Sobrenome</label>
+                    <input type="text" id="last_name" name="last_name" value="{{ usuario.last_name }}">
+                </div>
+                <div class="form-group">
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="is_staff" name="is_staff" {% if usuario.is_staff %}checked{% endif %}>
+                        <label for="is_staff" style="margin: 0;">É Dono de Empresa</label>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary">Salvar</button>
+                <a href="{% url 'usuarios_list' %}" class="btn btn-secondary">Cancelar</a>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

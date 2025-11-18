@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Criar Empresa</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/base.css' %}">
+    <style>
+        .container { max-width: 600px; }
+        h2 { margin-bottom: 30px; }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <h1>📊 Sistema de Gestão</h1>
+    </nav>
+    
+    <div class="container">
+        <div class="card">
+            <h2>Criar Nova Empresa</h2>
+            
+            <form method="POST">
+                {% csrf_token %}
+                
+                <div class="form-group">
+                    <label for="nome">Nome da Empresa *</label>
+                    <input 
+                        type="text" 
+                        id="nome" 
+                        name="nome" 
+                        placeholder="Digite o nome da empresa"
+                        required
+                        autofocus
+                    >
+                </div>
+                
+                <button type="submit" class="btn btn-primary">Criar Empresa</button>
+                <a href="{% url 'dashboard' %}" class="btn btn-secondary">Cancelar</a>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

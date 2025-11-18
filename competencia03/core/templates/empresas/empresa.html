@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ empresa.nome }} - Detalhes</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/base.css' %}">
+    <link rel="stylesheet" href="{% static 'css/modal.css' %}">
+</head>
+<body>
+    <nav class="navbar">
+        <h1>🏢 {{ empresa.nome }}</h1>
+        <a href="{% url 'dashboard' %}" class="btn btn-secondary">Voltar ao Dashboard</a>
+    </nav>
+    
+    <div class="container">
+        <div class="header-card">
+            <h2>{{ empresa.nome }}</h2>
+            <p class="meta">Criada por {{ empresa.criador.username }}</p>
+        </div>
+        
+        <div class="stats">
+            <div class="stat-card">
+                <h3>Total de Projetos</h3>
+                <div class="number">{{ projetos|length }}</div>
+            </div>
+            <div class="stat-card" style="border-left-color: #3498db;">
+                <h3>Projetos Ativos</h3>
+                <div class="number">{{ projetos|length }}</div>
+            </div>
+            <div class="stat-card" style="border-left-color: #2ecc71;">
+                <h3>Membros da Empresa</h3>
+                <div class="number">{{ empresa.membros.count }}</div>
+            </div>
+        </div>
+        
+        {% if empresa.criador == request.user %}
+        <div class="section-header">
+            <h3>Membros da Empresa</h3>
+            <button onclick="openMemberModal()" class="btn btn-primary">+ Adicionar Membro</button>
+        </div>
+        
+        <div class="card-grid" style="margin-bottom: 30px;">
+            {% if empresa.membros.count > 0 %}
+                {% for membro in empresa.membros.all %}
+                <div class="project-card">
+                    <h4>👤 {{ membro.username }}</h4>
+                    <p class="members">{{ membro.first_name }} {{ membro.last_name }}</p>
+                    <div class="actions">
+                        <a href="{% url 'remover_membro_empresa' empresa.id membro.id %}" class="btn btn-danger" style="padding: 8px 16px; font-size: 12px;" onclick="return confirm('Tem certeza que deseja remover este membro?')">Remover</a>
+                    </div>
+                </div>
+                {% endfor %}
+            {% endif %}
+        </div>
+        {% endif %}
+        
+        <div class="section-header">
+            <h3>Projetos</h3>
+            <div>
+                {% if empresa.criador == request.user or request.user in empresa.membros.all %}
+                <a href="{% url 'criar_projeto' empresa.id %}" class="btn btn-primary">+ Novo Projeto</a>
+                {% endif %}
+                {% if empresa.criador == request.user %}
+                <a href="{% url 'delete_empresa' empresa.id %}" class="btn btn-danger">Excluir Empresa</a>
+                {% endif %}
+            </div>
+        </div>
+        
+        {% if projetos %}
+            <div class="card-grid">
+                {% for projeto in projetos %}
+                <div class="project-card">
+                    <h4>{{ projeto.nome }}</h4>
+                    <p class="members">
+                        👤 Criado por {{ projeto.criador.username }}
+                        {% if projeto.membros.count > 0 %}
+                        <br>👥 {{ projeto.membros.count }} membro(s)
+                        {% endif %}
+                    </p>
+                    <div class="actions">
+                        <a href="{% url 'projeto' projeto.id %}" class="btn btn-primary" style="padding: 8px 16px; font-size: 12px;">Ver Detalhes</a>
+                        {% if projeto.criador == request.user or empresa.criador == request.user %}
+                        <a href="{% url 'delete_projeto' projeto.id %}" class="btn btn-danger" style="padding: 8px 16px; font-size: 12px;">Excluir</a>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="empty-state">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                    <line x1="9" y1="9" x2="15" y2="9"/>
+                    <line x1="9" y1="15" x2="15" y2="15"/>
+                </svg>
+                <h3>Nenhum projeto encontrado</h3>
+                <p>Esta empresa ainda não possui projetos. Crie o primeiro projeto para começar!</p>
+                {% if empresa.criador == request.user or request.user in empresa.membros.all %}
+                <a href="{% url 'criar_projeto' empresa.id %}" class="btn btn-primary">Criar Primeiro Projeto</a>
+                {% endif %}
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- Modal para adicionar membro -->
+    <div id="memberModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Adicionar Membro à Empresa</h3>
+                <button class="close" onclick="closeMemberModal()">&times;</button>
+            </div>
+            {% if usuarios_disponiveis %}
+                <ul class="user-select-list">
+                    {% for user in usuarios_disponiveis %}
+                        <li class="user-select-item">
+                            <span>{{ user.username }} - {{ user.first_name }} {{ user.last_name }}</span>
+                            <form method="POST" action="{% url 'adicionar_membro_empresa' empresa.id %}" style="margin: 0;">
+                                {% csrf_token %}
+                                <input type="hidden" name="user_id" value="{{ user.id }}">
+                                <button type="submit" class="btn btn-add">Adicionar</button>
+                            </form>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p style="text-align: center; color: #888;">Não há usuários disponíveis para adicionar.</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <script src="{% static 'js/main.js' %}"></script>
+</body>
+</html>

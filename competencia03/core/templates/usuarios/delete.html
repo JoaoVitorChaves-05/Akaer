@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Excluir Usuário</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/base.css' %}">
+    <style>
+        .container { max-width: 600px; }
+        h2 { margin-bottom: 20px; }
+        .user-info { background: #f8f9fa; padding: 20px; border-radius: 5px; margin: 20px 0; }
+        .user-info p { margin: 10px 0; color: #495057; }
+        .user-info strong { color: #2c3e50; }
+    </style>
+</head>
+<body>
+    <nav class="navbar"><h1>⚠️ Deletar Usuário</h1></nav>
+    <div class="container">
+        <div class="card">
+            <h2>Confirmar Exclusão</h2>
+            <div class="warning">
+                <strong>⚠️ Atenção!</strong> Esta ação não pode ser desfeita. Todas as empresas e projetos criados por este usuário serão deletados.
+            </div>
+            <div class="user-info">
+                <p><strong>Username:</strong> {{ usuario.username }}</p>
+                <p><strong>Nome:</strong> {{ usuario.first_name }} {{ usuario.last_name }}</p>
+                <p><strong>Email:</strong> {{ usuario.email }}</p>
+                <p><strong>Tipo:</strong> {% if usuario.is_staff %}Dono de Empresa{% else %}Usuário{% endif %}</p>
+            </div>
+            <p style="margin: 20px 0;">Tem certeza que deseja deletar este usuário?</p>
+            <form method="POST">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-danger">Sim, Deletar Permanentemente</button>
+                <a href="{% url 'usuarios_list' %}" class="btn btn-secondary">Cancelar</a>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Sistema de Gestão</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/base.css' %}">
+</head>
+<body>
+    <nav class="navbar">
+        <h1>📊 Sistema de Gestão</h1>
+        <div class="user-info">
+            <span class="user-name">Olá, {{ request.user.username }}</span>
+            {% if request.user.is_superuser %}
+            <a href="{% url 'usuarios_list' %}" class="btn btn-secondary">👥 Gerenciar Usuários</a>
+            {% endif %}
+            <a href="{% url 'logout' %}" class="btn btn-secondary">Sair</a>
+        </div>
+    </nav>
+    
+    <div class="container">
+        <div class="header">
+            <h2>Minhas Empresas</h2>
+            {% if request.user.is_staff or request.user.is_superuser %}
+            <a href="{% url 'criar_empresa' %}" class="btn btn-primary">+ Nova Empresa</a>
+            {% endif %}
+        </div>
+        
+        <div class="stats">
+            <div class="stat-card">
+                <h3>Total de Empresas</h3>
+                <div class="number">{{ empresas|length }}</div>
+            </div>
+            <div class="stat-card" style="border-left-color: #3498db;">
+                <h3>Projetos Ativos</h3>
+                <div class="number">0</div>
+            </div>
+            <div class="stat-card" style="border-left-color: #2ecc71;">
+                <h3>Membros Totais</h3>
+                <div class="number">0</div>
+            </div>
+        </div>
+        
+        {% if empresas %}
+            <div class="card-grid">
+                {% for empresa in empresas %}
+                <div class="card">
+                    <h3>{{ empresa.nome }}</h3>
+                    <p>Criada por {{ empresa.criador.username }}</p>
+                    {% if empresa.criador != request.user %}
+                    <p style="color: #3498db; font-size: 12px; margin-top: 5px;">📌 Você é membro desta empresa</p>
+                    {% endif %}
+                    <div class="card-actions">
+                        <a href="{% url 'empresa' empresa.id %}" class="btn btn-primary">Ver Detalhes</a>
+                        {% if empresa.criador == request.user %}
+                        <a href="{% url 'delete_empresa' empresa.id %}" class="btn btn-danger">Excluir</a>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="empty-state">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/>
+                    <polyline points="17 21 17 13 7 13 7 21"/>
+                    <polyline points="7 3 7 8 15 8"/>
+                </svg>
+                <h3>Nenhuma empresa encontrada</h3>
+                {% if request.user.is_staff or request.user.is_superuser %}
+                <p>Você não está vinculado a nenhuma empresa ainda. Crie sua primeira empresa para começar!</p>
+                <a href="{% url 'criar_empresa' %}" class="btn btn-primary">Criar Primeira Empresa</a>
+                {% else %}
+                <p>Você não está vinculado a nenhuma empresa ainda. Aguarde ser adicionado como membro de uma empresa.</p>
+                {% endif %}
+            </div>
+        {% endif %}
+    </div>
+</body>
+</html>

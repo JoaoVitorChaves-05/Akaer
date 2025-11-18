@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Criar Projeto</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/base.css' %}">
+    <style>
+        .container { max-width: 600px; }
+        .subtitle { color: #7f8c8d; margin-bottom: 30px; }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <h1>📁 Sistema de Gestão</h1>
+    </nav>
+    
+    <div class="container">
+        <div class="card">
+            <h2>Criar Novo Projeto</h2>
+            <p class="subtitle">Em {{ empresa.nome }}</p>
+            
+            <form method="POST">
+                {% csrf_token %}
+                
+                <div class="form-group">
+                    <label for="nome">Nome do Projeto *</label>
+                    <input 
+                        type="text" 
+                        id="nome" 
+                        name="nome" 
+                        placeholder="Digite o nome do projeto"
+                        required
+                        autofocus
+                    >
+                </div>
+                
+                <button type="submit" class="btn btn-primary">Criar Projeto</button>
+                <a href="{% url 'empresa' empresa.id %}" class="btn btn-secondary">Cancelar</a>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

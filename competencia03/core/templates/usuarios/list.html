@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerenciar Usuários</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/base.css' %}">
+    <style>
+        .btn-warning { background: #f39c12; color: white; }
+        .badge { padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: 500; }
+        .badge-admin { background: #667eea; color: white; }
+        .badge-staff { background: #3498db; color: white; }
+        .badge-user { background: #95a5a6; color: white; }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <h1>👥 Gerenciar Usuários</h1>
+        <a href="{% url 'dashboard' %}" class="btn btn-secondary">Voltar ao Dashboard</a>
+    </nav>
+    
+    <div class="container">
+        <div class="header">
+            <h2>Lista de usuários</h2>
+            <a href="{% url 'usuario_create' %}" class="btn btn-primary">+ Criar Novo Usuário</a>
+        </div>
+        
+        <div class="card">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Username</th>
+                        <th>Nome Completo</th>
+                        <th>Email</th>
+                        <th>Tipo</th>
+                        <th>Data de Criação</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for usuario in usuarios %}
+                    <tr>
+                        <td>{{ usuario.id }}</td>
+                        <td><strong>{{ usuario.username }}</strong></td>
+                        <td>{{ usuario.first_name }} {{ usuario.last_name }}</td>
+                        <td>{{ usuario.email }}</td>
+                        <td>
+                            {% if usuario.is_superuser %}
+                                <span class="badge badge-admin">Superusuário</span>
+                            {% elif usuario.is_staff %}
+                                <span class="badge badge-staff">Dono</span>
+                            {% else %}
+                                <span class="badge badge-user">Usuário</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ usuario.date_joined|date:"d/m/Y H:i" }}</td>
+                        <td>
+                            <a href="{% url 'usuario_edit' usuario.id %}" class="btn btn-warning" style="padding: 6px 12px; font-size: 12px;">Editar</a>
+                            {% if not usuario.is_superuser %}
+                            <a href="{% url 'usuario_delete' usuario.id %}" class="btn btn-danger" style="padding: 6px 12px; font-size: 12px;">Deletar</a>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="7" style="text-align: center; padding: 40px;">Nenhum usuário encontrado.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html>
