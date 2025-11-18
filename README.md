@@ -214,8 +214,8 @@ User N──N Projeto (como membro)
 
 ### 1️⃣ Clonar o Repositório
 ```bash
-git clone https://github.com/seu-usuario/akaer-teste-tecnico.git
-cd akaer-teste-tecnico
+git clone https://github.com/JoaoVitorChaves-05/Akaer.git
+cd Akaer
 ```
 
 ### 2️⃣ Criar Ambiente Virtual
