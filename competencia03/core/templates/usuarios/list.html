@@ -30,7 +30,6 @@
             <table>
                 <thead>
                     <tr>
-                        <th>ID</th>
                         <th>Username</th>
                         <th>Nome Completo</th>
                         <th>Email</th>
@@ -42,7 +41,6 @@
                 <tbody>
                     {% for usuario in usuarios %}
                     <tr>
-                        <td>{{ usuario.id }}</td>
                         <td><strong>{{ usuario.username }}</strong></td>
                         <td>{{ usuario.first_name }} {{ usuario.last_name }}</td>
                         <td>{{ usuario.email }}</td>
@@ -57,9 +55,9 @@
                         </td>
                         <td>{{ usuario.date_joined|date:"d/m/Y H:i" }}</td>
                         <td>
-                            <a href="{% url 'usuario_edit' usuario.id %}" class="btn btn-warning" style="padding: 6px 12px; font-size: 12px;">Editar</a>
+                            <a href="{% url 'usuario_edit' usuario.username %}" class="btn btn-warning" style="padding: 6px 12px; font-size: 12px;">Editar</a>
                             {% if not usuario.is_superuser %}
-                            <a href="{% url 'usuario_delete' usuario.id %}" class="btn btn-danger" style="padding: 6px 12px; font-size: 12px;">Deletar</a>
+                            <a href="{% url 'usuario_delete' usuario.username %}" class="btn btn-danger" style="padding: 6px 12px; font-size: 12px;">Deletar</a>
                             {% endif %}
                         </td>
                     </tr>

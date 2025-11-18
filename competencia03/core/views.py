@@ -1,11 +1,11 @@
 from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseForbidden
 from django.shortcuts import get_object_or_404, redirect
-from .models import Empresa, Projeto
-from django.contrib.auth.models import User
+from .models import Empresa, Projeto, CustomUser
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
+from django.db import IntegrityError
 
 # Create your views here.
 def index(request):
@@ -43,9 +43,9 @@ def empresa_view(request, id):
             Q(criador=request.user) | Q(membros=request.user)
         ).distinct()
     
-    usuarios_disponiveis = User.objects.exclude(
-        id__in=empresa.membros.values_list('id', flat=True)
-    ).exclude(id=empresa.criador.id).exclude(
+    usuarios_disponiveis = CustomUser.objects.exclude(
+        username__in=empresa.membros.values_list('username', flat=True)
+    ).exclude(username=empresa.criador.username).exclude(
         Q(empresas_vinculadas__isnull=False) | Q(empresas_criadas__isnull=False)
     ).exclude(is_superuser=True).order_by('username')
 
@@ -78,7 +78,7 @@ def add_membro(request, id_projeto):
         return HttpResponseForbidden("Apenas o criador do projeto ou dono da empresa pode adicionar membros.")
 
     user_id = request.POST["user_id"]
-    usuario = User.objects.get(id=user_id)
+    usuario = CustomUser.objects.get(username=user_id)
     projeto.membros.add(usuario)
 
     return redirect('projeto', id=id_projeto)
@@ -89,7 +89,7 @@ def remove_membro(request, id_projeto, id_usuario):
     if projeto.criador != request.user and projeto.empresa.criador != request.user:
         return HttpResponseForbidden("Apenas o criador do projeto ou dono da empresa pode remover membros.")
 
-    usuario = User.objects.get(id=id_usuario)
+    usuario = CustomUser.objects.get(username=id_usuario)
     projeto.membros.remove(usuario)
 
     return redirect('projeto', id=id_projeto)
@@ -143,7 +143,7 @@ def adicionar_membro_empresa(request, empresa_id):
     if request.method == "POST":
         user_id = request.POST.get("user_id")
         if user_id:
-            usuario = get_object_or_404(User, id=user_id)
+            usuario = get_object_or_404(CustomUser, username=user_id)
             empresa.membros.add(usuario)
     
     return redirect('empresa', id=empresa_id)
@@ -155,7 +155,7 @@ def remover_membro_empresa(request, empresa_id, user_id):
     if empresa.criador != request.user:
         return HttpResponseForbidden("Apenas o criador da empresa pode remover membros.")
     
-    usuario = get_object_or_404(User, id=user_id)
+    usuario = get_object_or_404(CustomUser, username=user_id)
     empresa.membros.remove(usuario)
     
     return redirect('empresa', id=empresa_id)
@@ -170,11 +170,11 @@ def projeto_view(request, id):
         return HttpResponseForbidden("Você não tem acesso a este projeto.")
     
     usuarios_disponiveis = projeto.empresa.membros.exclude(
-        id__in=projeto.membros.values_list('id', flat=True)
-    ).exclude(id=projeto.criador.id)
+        username__in=projeto.membros.values_list('username', flat=True)
+    ).exclude(username=projeto.criador.username)
     
-    if projeto.empresa.criador.id != projeto.criador.id and projeto.empresa.criador not in projeto.membros.all():
-        usuarios_disponiveis = usuarios_disponiveis | User.objects.filter(id=projeto.empresa.criador.id)
+    if projeto.empresa.criador.username != projeto.criador.username and projeto.empresa.criador not in projeto.membros.all():
+        usuarios_disponiveis = usuarios_disponiveis | CustomUser.objects.filter(username=projeto.empresa.criador.username)
     
     usuarios_disponiveis = usuarios_disponiveis.order_by('username')
     
@@ -189,7 +189,7 @@ def usuarios_list(request):
     if not request.user.is_superuser:
         return HttpResponseForbidden("Apenas administradores podem acessar esta página.")
     
-    usuarios = User.objects.all().order_by('-date_joined')
+    usuarios = CustomUser.objects.all().order_by('-date_joined')
     return render(request, "usuarios/list.html", {"usuarios": usuarios})
 
 @login_required
@@ -205,15 +205,20 @@ def usuario_create(request):
         last_name = request.POST.get("last_name", "")
         is_staff = request.POST.get("is_staff") == "on"
         
-        user = User.objects.create_user(
-            username=username,
-            email=email,
-            password=password,
-            first_name=first_name,
-            last_name=last_name,
-            is_staff=is_staff
-        )
-        return redirect('usuarios_list')
+        try:
+            user = CustomUser.objects.create_user(
+                username=username,
+                password=password
+            )
+            user.email = email
+            user.first_name = first_name
+            user.last_name = last_name
+            user.is_staff = is_staff
+            user.save()
+            return redirect('usuarios_list')
+        except IntegrityError:
+            error = f"O username '{username}' já está em uso. Por favor, escolha outro."
+            return render(request, "usuarios/create.html", {"error": error})
     
     return render(request, "usuarios/create.html")
 
@@ -222,10 +227,19 @@ def usuario_edit(request, id):
     if not request.user.is_superuser:
         return HttpResponseForbidden("Apenas administradores podem editar usuários.")
     
-    usuario = get_object_or_404(User, id=id)
+    usuario = get_object_or_404(CustomUser, username=id)
     
     if request.method == "POST":
-        usuario.username = request.POST["username"]
+        novo_username = request.POST["username"]
+        
+        if novo_username != usuario.username:
+            if CustomUser.objects.filter(username=novo_username).exists():
+                error = f"O username '{novo_username}' já está em uso. Por favor, escolha outro."
+                return render(request, "usuarios/edit.html", {"usuario": usuario, "error": error})
+            else:
+                error = "Não é possível alterar o username após a criação do usuário."
+                return render(request, "usuarios/edit.html", {"usuario": usuario, "error": error})
+        
         usuario.email = request.POST.get("email", "")
         usuario.first_name = request.POST.get("first_name", "")
         usuario.last_name = request.POST.get("last_name", "")
@@ -244,7 +258,7 @@ def usuario_delete(request, id):
     if not request.user.is_superuser:
         return HttpResponseForbidden("Apenas administradores podem deletar usuários.")
     
-    usuario = get_object_or_404(User, id=id)
+    usuario = get_object_or_404(CustomUser, username=id)
     
     if usuario.is_superuser:
         return HttpResponseForbidden("Não é possível deletar um superusuário.")

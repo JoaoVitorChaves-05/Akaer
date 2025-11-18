@@ -30,12 +30,12 @@ for (day, user), grupo in df.groupby(["Date", "User Name"]):
     resultados.append({
         "Day": day,
         "User Name": user,
-        "Total Usage": total
+        "End Time": total
     })
 
 result_df = pd.DataFrame(resultados)
-result_df["Total Usage"] = pd.to_timedelta(result_df["Total Usage"], unit='h')
-result_df["Total Usage"] = result_df["Total Usage"].apply(lambda x: str(x).split(' ')[-1].split('.')[0])
+result_df["End Time"] = pd.to_timedelta(result_df["End Time"], unit='h')
+result_df["End Time"] = result_df["End Time"].apply(lambda x: str(x).split(' ')[-1].split('.')[0])
 result_df = result_df.sort_values(["Day", "User Name"], ascending=[True, True])
 result_df.to_excel('ResultadoLicencas.xlsx', index=False)
 print("ResultadoLicencas.xlsx criado com sucesso!")

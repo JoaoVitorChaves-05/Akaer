@@ -48,7 +48,7 @@
                     <h4>👤 {{ membro.username }}</h4>
                     <p class="members">{{ membro.first_name }} {{ membro.last_name }}</p>
                     <div class="actions">
-                        <a href="{% url 'remover_membro_empresa' empresa.id membro.id %}" class="btn btn-danger" style="padding: 8px 16px; font-size: 12px;" onclick="return confirm('Tem certeza que deseja remover este membro?')">Remover</a>
+                        <a href="{% url 'remover_membro_empresa' empresa.id membro.username %}" class="btn btn-danger" style="padding: 8px 16px; font-size: 12px;" onclick="return confirm('Tem certeza que deseja remover este membro?')">Remover</a>
                     </div>
                 </div>
                 {% endfor %}
@@ -118,7 +118,7 @@
                             <span>{{ user.username }} - {{ user.first_name }} {{ user.last_name }}</span>
                             <form method="POST" action="{% url 'adicionar_membro_empresa' empresa.id %}" style="margin: 0;">
                                 {% csrf_token %}
-                                <input type="hidden" name="user_id" value="{{ user.id }}">
+                                <input type="hidden" name="user_id" value="{{ user.username }}">
                                 <button type="submit" class="btn btn-add">Adicionar</button>
                             </form>
                         </li>

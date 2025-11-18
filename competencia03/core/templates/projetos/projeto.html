@@ -46,7 +46,7 @@
                 <li class="member-item">
                     <span>👤 {{ membro.username }} - {{ membro.first_name }} {{ membro.last_name }}</span>
                     {% if projeto.criador == request.user or projeto.empresa.criador == request.user %}
-                    <a href="{% url 'remove_membro' projeto.id membro.id %}" class="btn btn-danger" style="padding: 6px 12px; font-size: 12px;" onclick="return confirm('Tem certeza que deseja remover este membro?')">Remover</a>
+                    <a href="{% url 'remove_membro' projeto.id membro.username %}" class="btn btn-danger" style="padding: 6px 12px; font-size: 12px;" onclick="return confirm('Tem certeza que deseja remover este membro?')">Remover</a>
                     {% endif %}
                 </li>
                 {% endfor %}
@@ -79,7 +79,7 @@
                             <strong>{{ usuario.username }}</strong>
                             <div style="font-size: 12px; color: #7f8c8d;">{{ usuario.first_name }} {{ usuario.last_name }}</div>
                         </div>
-                        <button type="submit" name="user_id" value="{{ usuario.id }}" class="btn btn-primary" style="padding: 6px 12px; font-size: 12px;">Adicionar</button>
+                        <button type="submit" name="user_id" value="{{ usuario.username }}" class="btn btn-primary" style="padding: 6px 12px; font-size: 12px;">Adicionar</button>
                     </li>
                     {% empty %}
                     <li class="empty-state">
