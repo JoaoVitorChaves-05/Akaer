@@ -9,6 +9,7 @@ Repositório contendo as soluções para o processo seletivo de estágio na **Ak
 - [Competência 01 - Algoritmos e Análise de Dados](#-competência-01---algoritmos-e-análise-de-dados)
 - [Competência 02 - Banco de Dados SQL](#-competência-02---banco-de-dados-sql)
 - [Competência 03 - Sistema de Gestão com Django](#-competência-03---sistema-de-gestão-com-django)
+- [Competência 04 - Teste de Excel](#-competência-04---teste-de-excel)
 - [Tecnologias Utilizadas](#-tecnologias-utilizadas)
 - [Como Executar](#-como-executar)
 
@@ -25,6 +26,10 @@ Três exercícios de consultas SQL envolvendo criação de schemas, inserção d
 ## 🌐 Competência 03 - Sistema de Gestão com Django
 
 Sistema completo de gerenciamento de empresas, projetos e membros construído com Django 4.2.
+
+## Competência 04 - Teste de Excel
+
+Exercícios de Excel estão resolvidos na pasta compentencia04
 
 ### 🎯 Funcionalidades Principais
 
