@@ -1,6 +1,6 @@
 # 🚀 Teste Técnico - Akaer Engenharia - Estágio
 
-Repositório contendo as soluções para o processo seletivo de estágio na **Akaer Engenharia**. O teste está dividido em três competências que avaliam diferentes habilidades técnicas essenciais para a vaga.
+Repositório contendo as soluções para o processo seletivo de estágio na **Akaer Engenharia**. O teste está dividido em quatro competências que avaliam diferentes habilidades técnicas essenciais para a vaga.
 
 ---
 
