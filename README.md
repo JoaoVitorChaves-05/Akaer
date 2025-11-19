@@ -87,7 +87,7 @@ Exercícios práticos de Excel envolvendo manipulação de dados, fórmulas e fo
 
 #### Models (`core/models.py`)
 ```python
-CustomUser (username como PRIMARY KEY, sem coluna id)
+User (username como PRIMARY KEY, sem coluna id)
 ├── username: CharField(primary_key=True)
 ├── email: EmailField
 ├── first_name: CharField
@@ -98,14 +98,14 @@ CustomUser (username como PRIMARY KEY, sem coluna id)
 
 Empresa
 ├── nome: CharField
-├── criador: ForeignKey(CustomUser)
-└── membros: ManyToManyField(CustomUser)
+├── criador: ForeignKey(User)
+└── membros: ManyToManyField(User)
 
 Projeto
 ├── nome: CharField
 ├── empresa: ForeignKey(Empresa)
-├── criador: ForeignKey(CustomUser)
-└── membros: ManyToManyField(CustomUser)
+├── criador: ForeignKey(User)
+└── membros: ManyToManyField(User)
 ```
 
 #### Views Principais (`core/views.py`)
@@ -223,21 +223,21 @@ Projetos
 **SQLite** (desenvolvimento)
 
 **Modelo de Usuário Customizado:**
-- Implementado `CustomUser` com `username` como PRIMARY KEY
+- Implementado `User` com `username` como PRIMARY KEY
 - **Não possui coluna `id`** (conforme requisito do exercício)
-- Gerenciado por `CustomUserManager` para criação de usuários e superusuários
-- Configurado em settings.py: `AUTH_USER_MODEL = 'core.CustomUser'`
+- Gerenciado por `UserManager` para criação de usuários e superusuários
+- Configurado em settings.py: `AUTH_USER_MODEL = 'core.User'`
 
 **Migrações:**
-- `0001_initial.py`: Schema inicial com CustomUser, Empresa e Projeto
+- `0001_initial.py`: Schema inicial com User, Empresa e Projeto
 
 **Relacionamentos:**
 ```
-CustomUser 1──N Empresa (como criador)
-CustomUser N──N Empresa (como membro)
+User 1──N Empresa (como criador)
+User N──N Empresa (como membro)
 Empresa 1──N Projeto
-CustomUser 1──N Projeto (como criador)
-CustomUser N──N Projeto (como membro)
+User 1──N Projeto (como criador)
+User N──N Projeto (como membro)
 ```
 
 ---
@@ -392,9 +392,9 @@ Akaer/
 ## ✨ Destaques Técnicos
 
 ### Modelo de Usuário Customizado
-- Implementação de `CustomUser` com **username como PRIMARY KEY**
+- Implementação de `User` com **username como PRIMARY KEY**
 - Ausência da coluna `id` conforme requisito do exercício
-- `CustomUserManager` para gerenciamento de criação de usuários
+- `UserManager` para gerenciamento de criação de usuários
 - Tratamento robusto de erros de integridade (username duplicado)
 
 ### Sistema de Permissões
@@ -424,7 +424,7 @@ Akaer/
 
 ### Competência 03
 - **Desafio:** Sistema de permissões hierárquico com modelo de usuário customizado
-- **Solução:** Uso de decorators, ForeignKeys, ManyToMany e CustomUser sem coluna ID
+- **Solução:** Uso de decorators, ForeignKeys, ManyToMany e modelo User sem coluna ID
 - **Aprendizado:** 
   - Arquitetura MVC com Django
   - Relacionamentos complexos no ORM

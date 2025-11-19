@@ -1,9 +1,9 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
-from .models import CustomUser, Empresa, Projeto
+from .models import User, Empresa, Projeto
 
-class CustomUserAdmin(UserAdmin):
-    model = CustomUser
+class UserAdmin(UserAdmin):
+    model = User
     list_display = ['username', 'email', 'first_name', 'last_name', 'is_staff']
     fieldsets = (
         (None, {'fields': ('username', 'password')}),
@@ -18,6 +18,6 @@ class CustomUserAdmin(UserAdmin):
         }),
     )
 
-admin.site.register(CustomUser, CustomUserAdmin)
+admin.site.register(User, UserAdmin)
 admin.site.register(Empresa)
 admin.site.register(Projeto)

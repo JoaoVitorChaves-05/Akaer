@@ -1,7 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 
-class CustomUserManager(BaseUserManager):
+class UserManager(BaseUserManager):
     def create_user(self, username, password=None, **extra_fields):
         if not username:
             raise ValueError('O username é obrigatório')
@@ -15,7 +15,7 @@ class CustomUserManager(BaseUserManager):
         extra_fields.setdefault('is_superuser', True)
         return self.create_user(username, password, **extra_fields)
 
-class CustomUser(AbstractBaseUser, PermissionsMixin):
+class User(AbstractBaseUser, PermissionsMixin):
     username = models.CharField(max_length=150, unique=True, primary_key=True)
     email = models.EmailField(blank=True)
     first_name = models.CharField(max_length=150, blank=True)
@@ -24,7 +24,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     is_staff = models.BooleanField(default=False)
     date_joined = models.DateTimeField(auto_now_add=True)
 
-    objects = CustomUserManager()
+    objects = UserManager()
 
     USERNAME_FIELD = 'username'
     REQUIRED_FIELDS = []
@@ -34,8 +34,8 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
 
 class Empresa(models.Model):
     nome = models.CharField(max_length=100)
-    criador = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='empresas_criadas')
-    membros = models.ManyToManyField(CustomUser, related_name='empresas_vinculadas', blank=True)
+    criador = models.ForeignKey(User, on_delete=models.CASCADE, related_name='empresas_criadas')
+    membros = models.ManyToManyField(User, related_name='empresas_vinculadas', blank=True)
 
     def __str__(self):
         return self.nome
@@ -44,8 +44,8 @@ class Empresa(models.Model):
 class Projeto(models.Model):
     nome = models.CharField(max_length=100)
     empresa = models.ForeignKey(Empresa, on_delete=models.CASCADE, related_name='projetos')
-    criador = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='projetos_criados')
-    membros = models.ManyToManyField(CustomUser, related_name='projetos_participantes', blank=True)
+    criador = models.ForeignKey(User, on_delete=models.CASCADE, related_name='projetos_criados')
+    membros = models.ManyToManyField(User, related_name='projetos_participantes', blank=True)
 
     def __str__(self):
         return f"{self.nome} ({self.empresa.nome})"
